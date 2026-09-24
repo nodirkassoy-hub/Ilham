@@ -1,0 +1,222 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+   DESIGN TOKENS
+   Dark is the default (the product's "premium fintech" identity); light mode
+   swaps only the token values so every component stays theme-agnostic.
+   ========================================================================== */
+:root,
+:root.dark {
+  --c-canvas: 7 11 18;          /* page background      #070B12 */
+  --c-surface: 14 20 31;        /* card background      #0E141F */
+  --c-raised: 21 29 43;         /* elevated surfaces    #151D2B */
+  --c-ink: 233 239 248;         /* primary text         #E9EFF8 */
+  --c-muted: 148 163 184;       /* secondary text       #94A3B8 */
+  --c-faint: 100 116 139;       /* tertiary text        #64748B */
+  --c-line: 255 255 255;        /* borders (used @ low alpha) */
+  --c-glass-hi: 255 255 255;
+  --c-shadow: 0 0 0;
+
+  --c-brand: 20 190 140;        /* jade                 #14BE8C */
+  --c-brand-soft: 20 190 140;
+  --c-brand-ink: 6 24 19;
+
+  --c-gold: 233 178 62;
+  --c-gold-soft: 233 178 62;
+  --c-violet: 148 132 245;
+  --c-violet-soft: 148 132 245;
+  --c-sky: 78 158 235;
+  --c-sky-soft: 78 158 235;
+  --c-success: 52 201 138;
+  --c-success-soft: 52 201 138;
+  --c-warning: 240 180 41;
+  --c-warning-soft: 240 180 41;
+  --c-danger: 242 104 138;
+  --c-danger-soft: 242 104 138;
+
+  --line-alpha: 0.08;
+  --glass-bg: rgb(255 255 255 / 0.045);
+  --glass-brd: rgb(255 255 255 / 0.09);
+  --aurora-a: rgb(20 190 140 / 0.20);
+  --aurora-b: rgb(15 163 177 / 0.16);
+  --aurora-c: rgb(148 132 245 / 0.13);
+  --grid-alpha: 0.035;
+  --sheen: rgb(255 255 255 / 0.06);
+
+  color-scheme: dark;
+}
+
+:root.light {
+  --c-canvas: 246 248 251;      /* #F6F8FB */
+  --c-surface: 255 255 255;
+  --c-raised: 250 251 253;
+  --c-ink: 12 20 32;            /* #0C1420 */
+  --c-muted: 84 98 118;
+  --c-faint: 125 140 160;
+  --c-line: 12 20 32;
+  --c-glass-hi: 255 255 255;
+  --c-shadow: 15 23 42;
+
+  --c-brand: 11 148 108;        /* deeper jade for AA contrast on white */
+  --c-brand-ink: 255 255 255;
+  --c-gold: 176 128 12;
+  --c-violet: 108 92 214;
+  --c-sky: 30 116 200;
+  --c-success: 16 145 100;
+  --c-warning: 173 121 8;
+  --c-danger: 205 55 92;
+
+  --line-alpha: 0.1;
+  --glass-bg: rgb(255 255 255 / 0.62);
+  --glass-brd: rgb(12 20 32 / 0.08);
+  --aurora-a: rgb(11 148 108 / 0.13);
+  --aurora-b: rgb(15 163 177 / 0.10);
+  --aurora-c: rgb(108 92 214 / 0.09);
+  --grid-alpha: 0.05;
+  --sheen: rgb(255 255 255 / 0.9);
+
+  color-scheme: light;
+}
+
+@layer base {
+  * {
+    border-color: rgb(var(--c-line) / var(--line-alpha));
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-canvas text-ink font-sans antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4, h5 {
+    @apply font-display font-semibold tracking-[-0.02em];
+    text-wrap: balance;
+  }
+  /* Money, quantities, codes: always tabular so columns line up. */
+  .tnum { font-variant-numeric: tabular-nums lining-nums; }
+  ::selection { background: rgb(var(--c-brand) / 0.28); }
+  :focus-visible {
+    outline: 2px solid rgb(var(--c-brand) / 0.7);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  input, select, textarea, button { font: inherit; }
+  /* Scrollbars */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--c-line) / 0.14);
+    border-radius: 99px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgb(var(--c-line) / 0.26); background-clip: content-box; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* ---- Liquid glass surfaces ------------------------------------------ */
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-brd);
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+  }
+  .glass-strong {
+    background: rgb(var(--c-surface) / 0.82);
+    border: 1px solid rgb(var(--c-line) / calc(var(--line-alpha) + 0.02));
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+  }
+  .card {
+    @apply rounded-3xl bg-surface border shadow-card;
+    border-color: rgb(var(--c-line) / var(--line-alpha));
+  }
+  /* Soft top-edge highlight that makes rounded cards read as physical objects */
+  .sheen { position: relative; }
+  .sheen::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    border-radius: inherit;
+    background: linear-gradient(90deg, transparent, var(--sheen), transparent);
+    pointer-events: none;
+  }
+  .aurora {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .aurora::before,
+  .aurora::after {
+    content: '';
+    position: absolute;
+    width: 58vw;
+    height: 58vw;
+    border-radius: 50%;
+    filter: blur(90px);
+  }
+  .aurora::before { background: var(--aurora-a); top: -22vw; left: -14vw; }
+  .aurora::after { background: var(--aurora-b); top: -8vw; right: -18vw; }
+  .aurora-3::before { background: var(--aurora-c); top: 32vh; left: 34vw; }
+
+  .grid-bg {
+    background-image: linear-gradient(to right, rgb(var(--c-line) / var(--grid-alpha)) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--c-line) / var(--grid-alpha)) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 30%, transparent 100%);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(100deg, rgb(var(--c-ink)) 0%, rgb(var(--c-brand)) 55%, rgb(var(--c-sky)) 100%);
+  }
+  .hairline { border-color: rgb(var(--c-line) / var(--line-alpha)); }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      rgb(var(--c-line) / 0.05) 25%,
+      rgb(var(--c-line) / 0.13) 37%,
+      rgb(var(--c-line) / 0.05) 63%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer rounded-lg;
+  }
+
+  /* Admin panel uses a distinct, denser "operations console" surface. */
+  .admin-surface {
+    background: rgb(var(--c-surface) / 0.7);
+    border: 1px solid rgb(var(--c-line) / calc(var(--line-alpha) + 0.03));
+    @apply rounded-2xl;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .mask-fade-b {
+    mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+  }
+  .mask-fade-x {
+    mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  }
+}
